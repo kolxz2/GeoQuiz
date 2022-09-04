@@ -18,6 +18,8 @@ class QuizViewModel: ViewModel() {
         Question(R.string.question_asia, true)
     )
 
+    val questionBlankSize :Int = questionBlank.size
+
     val currentQuestionAnswer: Boolean
         get() = questionBlank[currentIndex].answer
     val currentQuestionText: Int

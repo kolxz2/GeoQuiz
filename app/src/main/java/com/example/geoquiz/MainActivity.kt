@@ -2,6 +2,7 @@ package com.example.geoquiz
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -20,7 +21,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var questionTextView: TextView
     private var userScore:Int = 0
     // connect ViewModel with MainActivity && inicialice Provider
-    private val quizViewModel = ViewModelProvider(this)[QuizViewModel::class.java]
+    private val quizViewModel: QuizViewModel by lazy {
+        ViewModelProvider(this)[QuizViewModel::class.java]
+    }
+    private val KEY_INDEX = "index"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +40,9 @@ class MainActivity : AppCompatActivity() {
         questionTextView = findViewById(R.id.question_text_view)
 
         updateQuestion()
+
+        val curretIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
+        quizViewModel.currentIndex = curretIndex
 
         // set Listener
         trueButton.setOnClickListener { view: View ->
@@ -52,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBlank.size
+            quizViewModel.moveToNext()
             updateQuestion()
             trueButton.isEnabled = true
             falseButton.isEnabled = true
@@ -62,19 +70,19 @@ class MainActivity : AppCompatActivity() {
     // DRY to update questionTextView
     private fun updateQuestion(){
         // iteration by questionBlank and setting text to UI
-        val questionTextResId = questionBlank[currentIndex].textResId
+        val questionTextResId = quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
     }
 
     // check user answer
     private fun checkAnswer(userAnswer:Boolean){
-        val correctAnswer = questionBlank[currentIndex].answer
+        val correctAnswer = quizViewModel.currentQuestionAnswer
         val massageResId:Int
         if(correctAnswer == userAnswer){
             massageResId = R.string.correct_toast
             userScore++
             Log.d(TAG, "userScore $userScore")
-            Log.d(TAG, "userScore ${questionBlank.size}")
+            Log.d(TAG, "userScore ${quizViewModel.questionBlankSize}")
         } else{
             massageResId = R.string.incorrect_toast
         }
@@ -83,12 +91,12 @@ class MainActivity : AppCompatActivity() {
             massageResId,
             Toast.LENGTH_SHORT
         ).show()
-        if (currentIndex == questionBlank.size - 1)
+        if (quizViewModel.currentIndex == quizViewModel.questionBlankSize - 1)
             showResult()
     }
 
     private fun showResult(){
-        val score = (userScore.toFloat() / questionBlank.size.toFloat() * 100).toInt()
+        val score = (userScore.toFloat() / quizViewModel.questionBlankSize.toFloat() * 100).toInt()
         Toast.makeText(
             this,
             "Correct answers $score%",
@@ -96,24 +104,32 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
-    override fun onPause() {
-        Log.d(TAG, "Work onPause")
-        super.onPause()
-    }
+
 
     override fun onStart() {
         Log.d(TAG, "Work onStart")
         super.onStart()
     }
 
-    override fun onStop() {
-        Log.d(TAG, " onStop")
-        super.onStop()
-    }
-
     override fun onResume() {
         Log.d(TAG, " onResume")
         super.onResume()
+    }
+
+    override fun onPause() {
+        Log.d(TAG, "Work onPause")
+        super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        Log.d(TAG, "onSaveInstanceState working")
+        outState.putInt(KEY_INDEX, quizViewModel.currentIndex)
+    }
+
+    override fun onStop() {
+        Log.d(TAG, " onStop")
+        super.onStop()
     }
 
     override fun onDestroy() {
