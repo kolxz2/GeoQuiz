@@ -15,26 +15,31 @@ private const val EXTRA_ANSWER_IS_TRUE = "CheatActivity"
 class CheatActivity : AppCompatActivity() {
 
     private var answerIsTrue = false
-    private lateinit var cheatButton: Button
-    private lateinit var textAnswer : TextView
+    private lateinit var showAnswerButton: Button
+    private lateinit var answerTextView : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cheat)
-        answerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false)
-        cheatButton = findViewById(R.id.cheat_button)
-        textAnswer = findViewById(R.id.answer_text_view)
-        textAnswer.text = answerIsTrue.toString()
+        answerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false) //
+        showAnswerButton = findViewById(R.id.show_answer_button)
+        answerTextView = findViewById(R.id.answer_text_view)
+        //answerTextView.text = answerIsTrue.toString()
 
-        cheatButton.setOnClickListener {
-            textAnswer.visibility = View.VISIBLE
+        showAnswerButton.setOnClickListener {
+            val answerText = when {
+                answerIsTrue -> R.string.true_button
+                else -> R.string.false_button
+            }
+            answerTextView.setText(answerText)
+            answerTextView.visibility = View.VISIBLE
         }
     }
     // like static method
     // used in MainActivity to sent data on CheatActivity
     companion object {
-        fun newIntent(pakageContext: Context, answerIsTrue: Boolean): Intent{
-            return Intent(pakageContext, CheatActivity::class.java).apply {
+        fun newIntent(packageContext: Context, answerIsTrue: Boolean): Intent{
+            return Intent(packageContext, CheatActivity::class.java).apply {
                 putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue)
             }
         }

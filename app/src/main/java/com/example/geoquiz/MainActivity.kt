@@ -71,10 +71,10 @@ class MainActivity : AppCompatActivity() {
         cheatButton.setOnClickListener {
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             // crate intent connecting with CheatActivity
-           // val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
             //startActivityForResult(intent, REQUEST_CODE_CHEAT)
             // move task to ActivityManager
-          //  startActivity(intent)
+            startActivity(intent)
             Toast.makeText(
                 this,
                 "massageResId",
