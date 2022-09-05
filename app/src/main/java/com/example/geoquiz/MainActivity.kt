@@ -1,5 +1,6 @@
 package com.example.geoquiz
 
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -9,7 +10,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 
@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var trueButton: Button
     private lateinit var falseButton: Button
     private lateinit var nextButton: Button
+    private lateinit var cheatButton: Button
     private lateinit var questionTextView: TextView
     private var userScore:Int = 0
     // connect ViewModel with MainActivity && inicialice Provider
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_button)
+        cheatButton = findViewById(R.id.cheat_button)
         questionTextView = findViewById(R.id.question_text_view)
 
         updateQuestion()
@@ -64,6 +66,21 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
             trueButton.isEnabled = true
             falseButton.isEnabled = true
+        }
+
+        cheatButton.setOnClickListener {
+            val answerIsTrue = quizViewModel.currentQuestionAnswer
+            // crate intent connecting with CheatActivity
+           // val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            //startActivityForResult(intent, REQUEST_CODE_CHEAT)
+            // move task to ActivityManager
+          //  startActivity(intent)
+            Toast.makeText(
+                this,
+                "massageResId",
+                Toast.LENGTH_SHORT
+            ).show()
+            updateQuestion()
         }
     }
 
@@ -94,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         if (quizViewModel.currentIndex == quizViewModel.questionBlankSize - 1)
             showResult()
     }
-
+    // start toast to show result of answer
     private fun showResult(){
         val score = (userScore.toFloat() / quizViewModel.questionBlankSize.toFloat() * 100).toInt()
         Toast.makeText(
