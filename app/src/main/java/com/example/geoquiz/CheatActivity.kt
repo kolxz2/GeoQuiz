@@ -13,6 +13,7 @@ import android.widget.TextView
 private const val EXTRA_ANSWER_IS_TRUE = "CheatActivity"
 
 class CheatActivity : AppCompatActivity() {
+    /*Activity show answer on a question from MainActivity*/
 
     private var answerIsTrue = false
     private lateinit var showAnswerButton: Button
